@@ -22,7 +22,8 @@
     "less-middleware": "latest",
     "async": "latest",
     "express-xml-bodyparser": "latest",
-    "eliza": "0.0.1-2"
+    "eliza": "0.0.1-2",
+    "dotenv": ""
   },
   "devDependencies": {
     "nodemon": "latest"
