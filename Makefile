@@ -6,3 +6,6 @@ addpush:
 
 push:
 	ssh root@45.55.49.134 "cd ~/www/wechat-eliza/ && git pull && pm2 restart all"
+
+test:
+	mocha -w --harmony --sort $1

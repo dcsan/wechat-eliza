@@ -5,6 +5,8 @@ var ElizaBot = require('eliza/elizabot.js')
 var util = require("util");
 var elizas = {};
 
+var replies = require('../bot/replies');
+
 //only receives a GET request
 exports.index = function (req, res, next) {
     var echostr = req.query.echostr;
@@ -15,11 +17,14 @@ exports.index = function (req, res, next) {
 }
 
 exports.message = function (from, to, message) {
+    var say = "";
     // figure out if this is for us
-
+    say = replies.find(message);
+    if (say) {
+        return say;
+    }
 
     // do we already have a bot for this user?
-    var say = "";
     var eliza = elizas[from]
     if (!eliza) {
         eliza = elizas[from] = new ElizaBot
