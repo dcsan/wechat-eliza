@@ -3,6 +3,11 @@
  * Module dependencies
  */
 
+require('dotenv').config({
+    path: 'dot.env'
+});
+
+
 var express = require('express');
 var http = require('http');
 var fs = require('fs');
