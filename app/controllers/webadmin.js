@@ -5,10 +5,12 @@ var ElizaBot = require('eliza/elizabot.js')
 var util = require("util");
 var elizas = {};
 
+//only receives a GET request
 exports.index = function(req, res, next) {
-
-		echo_str = req.param('echostr', null)
-		res.send(echo_str);	
+	var echostr = req.query.echostr;
+    //var echo_response= ('echostr', null);
+    console.log("echo_response", echostr);
+    res.send(echostr);
 	
 }
 

@@ -1,4 +1,6 @@
 lib-cov
+
+*.dev
 *.seed
 *.log
 *.csv
@@ -13,3 +15,6 @@ results
 node_modules
 npm-debug.log
 .DS_Store
+
+*.env
+.idea

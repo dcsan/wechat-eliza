@@ -30,9 +30,9 @@ module.exports = function (app, config) {
 	app.locals.pretty = true;
 
 	// super auth
-	app.set('auth', express.basicAuth(function(user, pass) {
-		return config.basic_auth.user === user && config.basic_auth.pass === pass;
-	}));
+	//app.set('auth', express.basicAuth(function(user, pass) {
+	//	return config.basic_auth.user === user && config.basic_auth.pass === pass;
+	//}));
 
 	// less
 	app.use(lessMiddleware(
@@ -59,6 +59,6 @@ module.exports = function (app, config) {
 		next()
 	})
 
-	app.use(express.logger('tiny'));
+	//app.use(express.logger('tiny'));
 
 }
