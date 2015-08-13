@@ -1,6 +1,6 @@
 "use strict"
 
-_ = require("lodash-node");
+var _ = require("lodash-node");
 
 // TODO read from CSV file?
 
