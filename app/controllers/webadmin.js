@@ -40,6 +40,41 @@ exports.message = function (from, to, message) {
     return say;
 }
 
+exports.handleEvent = function(from, to, message) {
+    //{
+    //    xml:
+    //    {
+    //        tousername: ['gh_fb568b0e8821'],
+    //            fromusername
+    //    :
+    //        ['o3BQnsyPcNSssSKTRacDtc08iTCA'],
+    //            createtime
+    //    :
+    //        ['1439516443'],
+    //            msgtype
+    //    :
+    //        ['event'],
+    //            event
+    //    :
+    //        ['CLICK'],
+    //            eventkey
+    //    :
+    //        ['hello']
+    //    }
+    //}
+
+}
+
+function xmlWrapMessage(message) {
+    var str = util.format("<xml><ToUserName>%s</ToUserName><FromUserName>%s</FromUserName><CreateTime>%d</CreateTime><MsgType>text</MsgType><Content><![CDATA[%s]]></Content></xml>",
+        message.from,
+        message.to,
+        message.createtime + 1,
+        message.reply);
+    return str;
+}
+
+
 exports.receive = function (req, res, next) {
 
 
@@ -53,26 +88,41 @@ exports.receive = function (req, res, next) {
     // 	2014-03-13T10:02:10.060573+00:00 app[web.1]:      content: [ 'How are you' ],
     // 	2014-03-13T10:02:10.060573+00:00 app[web.1]:      msgid: [ '5990211898911335179' ] } }
 
+    var msgtype = req.body.xml.msgtype[0];
+    console.log("msgtype", msgtype);
+
     try {
         message = {
             to: req.body.xml.tousername[0],
             from: req.body.xml.fromusername[0],
-            msgtype: req.body.xml.msgtype[0],
-            content: req.body.xml.content[0],
+            msgtype: msgtype,
             createtime: parseInt(req.body.xml.createtime[0])
         }
     } catch (e) {
-        console.error("ERROR cant decode message body:", req.body);
+        console.error("ERROR cant basic decode message:", req.body);
     }
-    res.contentType("application/xml");
-    message.reply = exports.message(message.to, message.from, message.content);
-    var str = util.format("<xml><ToUserName>%s</ToUserName><FromUserName>%s</FromUserName><CreateTime>%d</CreateTime><MsgType>text</MsgType><Content><![CDATA[%s]]></Content></xml>", message.from, message.to, message.createtime + 1, message.reply);
 
+    switch (msgtype) {
+        case 'event':
+            reply = handleEvent(message);
+            break;
+
+        default:
+            message.content = req.body.xml.content[0];
+            reply = getReply(message.to, message.from, message.content);
+    }
+
+    message.reply = reply;
+    var str = xmlWrapMessage(message);
+
+    console.log("xml", req.body.xml);
     console.log(message.from, ">", message.content);
     console.log(message.from, "<", message.reply);
     console.log("--");
+
     //console.log(str);
+    res.contentType("application/xml");
     res.send(str);
 
-}
+};
 
