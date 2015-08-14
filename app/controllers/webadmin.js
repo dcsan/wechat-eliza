@@ -39,20 +39,43 @@ Brain.getReply = function(from, to, message) {
         if (eliza.quit) delete elizas[from]
     }
     return say;
-}
+};
+
+//body: { xml:
+//{ tousername: [ 'gh_fb568b0e8821' ],
+//    fromusername: [ 'o3BQnsyPcNSssSKTRacDtc08iTCA' ],
+//    createtime: [ '1439516443' ],
+//    msgtype: [ 'event' ],
+//    event: [ 'CLICK' ],
+//    eventkey: [ 'hello' ] } }
+
+// OR
+
+//{ xml:
+//{ tousername: [ 'gh_fb568b0e8821' ],
+//    fromusername: [ 'o3BQnsyPcNSssSKTRacDtc08iTCA' ],
+//    createtime: [ '1439519238' ],
+//    msgtype: [ 'event' ],
+//    event: [ 'subscribe' ],
+//    eventkey: [ '' ] } }
+
+
 
 Brain.handleEvent = function(message, xml) {
 
-    //body: { xml:
-    //{ tousername: [ 'gh_fb568b0e8821' ],
-    //    fromusername: [ 'o3BQnsyPcNSssSKTRacDtc08iTCA' ],
-    //    createtime: [ '1439516443' ],
-    //    msgtype: [ 'event' ],
-    //    event: [ 'CLICK' ],
-    //    eventkey: [ 'hello' ] } }
+    var reply;
+    var event = xml.event[0];
 
-    var key = xml.eventkey[0];
-    var reply = replies.find(key);
+    switch (event) {
+        case 'CLICK':  //yes in CAPS
+            var key = xml.eventkey[0];
+            reply = replies.find(key);
+            break;
+
+        case 'subscribe':
+            reply = Brain.handleSubscribe(message, xml);
+            break;
+    }
     return reply;
 
 };
@@ -88,7 +111,6 @@ exports.receive = function (req, res, next) {
     // 	2014-03-13T10:02:10.060573+00:00 app[web.1]:      msgid: [ '5990211898911335179' ] } }
 
     var msgtype = req.body.xml.msgtype[0];
-    console.log("msgtype", msgtype);
 
     try {
         message = {
@@ -104,10 +126,6 @@ exports.receive = function (req, res, next) {
     switch (msgtype) {
         case 'event':
             reply = Brain.handleEvent(message, req.body.xml);
-            break;
-
-        case 'subscribe':
-            reply = Brain.handleSubscribe(message, req.body.xml);
             break;
 
         default:
