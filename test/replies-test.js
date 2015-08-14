@@ -18,4 +18,10 @@ describe("replies", function () {
         expect(rep).to.include("Do you speak it?")
     });
 
+    // FIXME, this is a random from a list
+    it("should reply from lists", function () {
+        var rep = replies.find("hello", 0);
+        expect(rep).to.include("Hello back!");
+    });
+
 });

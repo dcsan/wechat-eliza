@@ -52,7 +52,7 @@ Brain.handleEvent = function(message, xml) {
     //    eventkey: [ 'hello' ] } }
 
     var key = xml.eventkey[0];
-    var reply = "you said" + key;
+    var reply = replies.find(key);
     return reply;
 
 }

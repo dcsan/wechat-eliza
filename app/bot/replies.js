@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 var _ = require("lodash-node");
 
@@ -20,18 +20,40 @@ var replyData = [
         reply: "Do you speak it?"
     },
 
+    {
+        regex: /hello/i,
+        replies: [
+            "Hello back!",
+            "Nice to meet you",
+            "What's up!",
+            "How are you today?"
+        ]
+    },
+
+    {
+        regex: /cn/i,
+        replies: [
+            "你好吗",
+            "很高兴认识你"
+        ]
+    }
+
 ];
 
 var replies = {
 
-    find: function(input) {
+    find: function(input, which) {
         var res = replyData.filter(function(one) {
             return one.regex.test(input);
         });
         var one = _.sample(res);
         if (one) {
-            return one.reply;
-            //return one.fn(input);
+            if (one.replies) {
+                if (which!=null) { return one.replies[which]; }
+                return _.sample(one.replies);
+            } else if (one.reply) {
+                return one.reply;
+            }
         }
         return null;
     }
