@@ -14,9 +14,8 @@ var xmlparser = require('express-xml-bodyparser');
 
 
 module.exports = function (app) {
-
 	// Webadmin
 	app.get('/', webadmin.index);
 	app.post('/', xmlparser({trim: false, explicitArray: false}), webadmin.receive);
 
-}
+};

@@ -1,11 +1,12 @@
 /**
  * Module dependencies.
  */
-var ElizaBot = require('eliza/elizabot.js')
+var ElizaBot = require('eliza/elizabot.js');
 var util = require("util");
 var elizas = {};
-
 var replies = require('../bot/replies');
+
+var Brain = {};
 
 //only receives a GET request
 exports.index = function (req, res, next) {
@@ -14,9 +15,9 @@ exports.index = function (req, res, next) {
     console.log("echo_response", echostr);
     res.send(echostr);
 
-}
+};
 
-exports.message = function (from, to, message) {
+Brain.getReply = function(from, to, message) {
     var say = "";
     // figure out if this is for us
     say = replies.find(message);
@@ -40,43 +41,36 @@ exports.message = function (from, to, message) {
     return say;
 }
 
-exports.handleEvent = function(from, to, message) {
-    //{
-    //    xml:
-    //    {
-    //        tousername: ['gh_fb568b0e8821'],
-    //            fromusername
-    //    :
-    //        ['o3BQnsyPcNSssSKTRacDtc08iTCA'],
-    //            createtime
-    //    :
-    //        ['1439516443'],
-    //            msgtype
-    //    :
-    //        ['event'],
-    //            event
-    //    :
-    //        ['CLICK'],
-    //            eventkey
-    //    :
-    //        ['hello']
-    //    }
-    //}
+Brain.handleEvent = function(message, xml) {
+
+    //body: { xml:
+    //{ tousername: [ 'gh_fb568b0e8821' ],
+    //    fromusername: [ 'o3BQnsyPcNSssSKTRacDtc08iTCA' ],
+    //    createtime: [ '1439516443' ],
+    //    msgtype: [ 'event' ],
+    //    event: [ 'CLICK' ],
+    //    eventkey: [ 'hello' ] } }
+
+    var key = xml.eventkey[0];
+    var reply = "you said" + key;
+    return reply;
 
 }
 
-function xmlWrapMessage(message) {
+Brain.xmlWrapMessage = function (message) {
     var str = util.format("<xml><ToUserName>%s</ToUserName><FromUserName>%s</FromUserName><CreateTime>%d</CreateTime><MsgType>text</MsgType><Content><![CDATA[%s]]></Content></xml>",
         message.from,
         message.to,
         message.createtime + 1,
         message.reply);
     return str;
-}
+};
+
 
 
 exports.receive = function (req, res, next) {
 
+    var reply;
 
     //curl -X POST --data @sample.xml http://localhost:5003/ --header "Content-Type:text/xml"
 
@@ -104,16 +98,16 @@ exports.receive = function (req, res, next) {
 
     switch (msgtype) {
         case 'event':
-            reply = handleEvent(message);
+            reply = Brain.handleEvent(message, req.body.xml);
             break;
 
         default:
             message.content = req.body.xml.content[0];
-            reply = getReply(message.to, message.from, message.content);
+            reply = Brain.getReply(message.to, message.from, message.content);
     }
 
     message.reply = reply;
-    var str = xmlWrapMessage(message);
+    var str = Brain.xmlWrapMessage(message);
 
     console.log("xml", req.body.xml);
     console.log(message.from, ">", message.content);
