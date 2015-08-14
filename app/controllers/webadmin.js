@@ -118,12 +118,11 @@ exports.receive = function (req, res, next) {
     message.reply = reply;
     var str = Brain.xmlWrapMessage(message);
 
-    console.log("xml", req.body.xml);
     console.log(message.from, ">", message.content);
     console.log(message.from, "<", message.reply);
 
     console.log("req.body", req.body);
-    console.log("req.body.xml>", req.body.xml);
+    //console.log("req.body.xml>", req.body.xml);
     console.log("message>", message);
 
     console.log("--");
