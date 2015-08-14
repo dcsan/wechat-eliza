@@ -31,6 +31,16 @@ var replyData = [
     },
 
     {
+        regex: /subscribe/i,
+        replies: [
+            "Hello back!",
+            "Nice to meet you",
+            "What's up!",
+            "How are you today?"
+        ]
+    },
+
+    {
         regex: /cn/i,
         replies: [
             "你好吗",

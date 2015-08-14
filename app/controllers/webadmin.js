@@ -55,7 +55,12 @@ Brain.handleEvent = function(message, xml) {
     var reply = replies.find(key);
     return reply;
 
-}
+};
+
+Brain.handleSubscribe = function(message, xml) {
+    var reply = replies.find("subscribe");
+    return reply;
+};
 
 Brain.xmlWrapMessage = function (message) {
     var str = util.format("<xml><ToUserName>%s</ToUserName><FromUserName>%s</FromUserName><CreateTime>%d</CreateTime><MsgType>text</MsgType><Content><![CDATA[%s]]></Content></xml>",
@@ -99,6 +104,10 @@ exports.receive = function (req, res, next) {
     switch (msgtype) {
         case 'event':
             reply = Brain.handleEvent(message, req.body.xml);
+            break;
+
+        case 'subscribe':
+            reply = Brain.handleSubscribe(message, req.body.xml);
             break;
 
         default:
